@@ -1,5 +1,6 @@
 const { AkairoClient } = require('discord-akairo'),
-	XIVAPI = require('xivapi-js'),
+	XIVAPI = require('../../xivapi-js/XIVAPI'),
+	//XIVAPI = require('xivapi-js'),
 	//KhloeProvider = require('./KhloeProvider'),
 	config = require('../resources/config.json')
 
@@ -22,8 +23,9 @@ class Client extends AkairoClient {
 			disableEveryone: false
 		})
 
-		this.xiv = new XIVAPI(config.keys.xivapi)
+		this.xiv = new XIVAPI(config.keys.xivapi, {snake_case: true})
 		this.config = config
+		this.utils = require('./utils')
 		if(process.env.NODE_ENV !== 'production')
 			this.config.default = config.default2
 
@@ -33,7 +35,7 @@ class Client extends AkairoClient {
 	async start(token) {
 		//init provider
 		//await this.provider.init().catch(reason => {throw new Error(reason)})
-		
+
 		//login
 		return this.login(token)
 	}
