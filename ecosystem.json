@@ -1,0 +1,12 @@
+{
+  "apps": [{
+    "name": "khloe",
+    "script": "./khloe.js",
+    "cwd": "/home/pi/khloe/",
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "exp_backoff_restart_delay": 10000,
+    "env": {
+      "NODE_ENV": "production",
+    }
+  }]
+}

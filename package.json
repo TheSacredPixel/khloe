@@ -1,0 +1,17 @@
+{
+  "name": "khloe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "khloe.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord-akairo": "^7.5.5",
+    "discord.js": "^11.4.2",
+    "sqlite": "^3.0.0",
+    "xivapi-js": "^0.1.0"
+  }
+}
