@@ -26,8 +26,6 @@ class Client extends AkairoClient {
 		this.xiv = new XIVAPI(config.keys.xivapi, {snake_case: true})
 		this.config = config
 		this.utils = require('./utils')
-		if(process.env.NODE_ENV !== 'production')
-			this.config.default = config.default2
 
 		//this.provider = new KhloeProvider()
 	}
