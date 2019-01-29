@@ -4,11 +4,17 @@ class AACommand extends Command {
 	constructor() {
 		super('AA', {
 			aliases: ['AA'],
-			description: ''
+			description: '',
+			args: [
+				{
+					id: 'input',
+					match: 'content'
+				}
+			]
 		})
 	}
 
-	exec(msg) {
+	async exec(msg, { input }) {
 
 	}
 }

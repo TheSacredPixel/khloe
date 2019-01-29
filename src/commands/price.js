@@ -15,34 +15,22 @@ class PriceCommand extends Command {
 	}
 
 	async exec(msg, { input }) {
-		input = input.split(' ')
+		let { server, text } = this.client.utils.getServer(input, this.client.xiv.resources.servers)
+		if(!server)
+			return msg.util.reply('you need to give me a valid server to look in!')
 
-		let server, pos = -1
-		for (let i = 0; i < input.length; i++) {
-			let string = this.client.utils.firstCapital(input[i])
-			if(this.client.xiv.resources.servers.includes(string)) {
-				server = string
-				pos = i
-				break
-			}
-		}
-		if(pos === -1)
-			return msg.util.reply('you need to give me a valid server to look in, too!')
-
-		input.splice(pos, 1)
-		input = input.join(' ')
-		let res = await this.client.xiv.search(input)
+		let res = await this.client.xiv.search(text)
 		if(!res.results.length)
-			return msg.util.send('Item not found!')
+			return msg.util.send('Item not found :(')
 
 		//try to find perfect match first
-		let found = res.results.find(result => result.name.toLowerCase() === input.toLowerCase())
+		let found = res.results.find(result => result.name.toLowerCase() === text.toLowerCase())
 
 		res = await this.client.xiv.market.prices(found ? found.id : res.results[0].id, server)
 		if(!res.prices.length)
-			return msg.util.send(`Couldn't find any listings for ${input}...`)
+			return msg.util.send(`Couldn't find any listings for ${this.client.utils.firstCapital(text)}...`)
 
-		return msg.util.send(`I found \`${input}\` for sale for ${res.prices[0].price_per_unit} gil!`)
+		return msg.util.send(`I found \`${this.client.utils.firstCapital(text)}\` for sale for ${res.prices[0].price_per_unit} gil!`)
 	}
 }
 

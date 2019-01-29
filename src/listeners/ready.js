@@ -10,7 +10,7 @@ class ReadyListener extends Listener {
 
 	exec() {
 		//set activity
-		this.client.user.setActivity('@khloe help')
+		this.client.user.setActivity('@Khloe help')
 
 		console.log('Ready!')
 	}

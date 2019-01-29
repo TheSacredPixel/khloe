@@ -1,7 +1,7 @@
 const { AkairoClient } = require('discord-akairo'),
 	XIVAPI = require('../../xivapi-js/XIVAPI'),
 	//XIVAPI = require('xivapi-js'),
-	//KhloeProvider = require('./KhloeProvider'),
+	KhloeProvider = require('./KhloeProvider'),
 	config = require('../resources/config.json')
 
 
@@ -27,12 +27,12 @@ class Client extends AkairoClient {
 		this.config = config
 		this.utils = require('./utils')
 
-		//this.provider = new KhloeProvider()
+		this.provider = new KhloeProvider()
 	}
 
 	async start(token) {
 		//init provider
-		//await this.provider.init().catch(reason => {throw new Error(reason)})
+		await this.provider.init().catch(reason => {throw new Error(reason)})
 
 		//login
 		return this.login(token)
