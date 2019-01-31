@@ -1,5 +1,5 @@
 const { AkairoClient } = require('discord-akairo'),
-	XIVAPI = require('../../xivapi-js/XIVAPI'),
+	//XIVAPI = require('../../xivapi-js/XIVAPI'),
 	//XIVAPI = require('xivapi-js'),
 	KhloeProvider = require('./KhloeProvider'),
 	config = require('../resources/config.json')
