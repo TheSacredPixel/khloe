@@ -8,7 +8,10 @@ class IAmCommand extends Command {
 			args: [
 				{
 					id: 'input',
-					match: 'content'
+					match: 'content',
+					prompt: {
+						start: 'please give me your character\'s name and server (or say \'cancel\').'
+					}
 				}
 			]
 		})
