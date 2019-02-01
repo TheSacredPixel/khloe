@@ -10,7 +10,7 @@ class ItemCommand extends SearchCommand {
 					id: 'input',
 					match: 'content',
 					prompt: {
-						start: 'which item do you want to search for? (or say 'cancel')'
+						start: 'which item do you want to search for? (or say \'cancel\')'
 					}
 				}
 			]

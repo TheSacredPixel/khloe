@@ -9,7 +9,7 @@ class SearchCommand extends Command {
 				id: 'input',
 				match: 'content',
 				prompt: {
-					start: 'what would you like to search for? (or say 'cancel')'
+					start: 'what would you like to search for? (or say \'cancel\')'
 				}
 			}
 		]
@@ -20,10 +20,10 @@ class SearchCommand extends Command {
 	}
 
 	async exec(msg, { input }) {
-		let find = await this.client.xiv.search(input, { 
+		let find = await this.client.xiv.search(input, {
 			indexes: this.name === 'search' ? '' : this.client.utils.firstCapital(this.name)
 		})
 	}
 }
 
-module.exports = ItemCommand
+module.exports = SearchCommand
