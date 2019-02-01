@@ -33,8 +33,7 @@ class IAmCommand extends Command {
 		if(!found)
 			return msg.util.send(`Couldn't find ${this.client.utils.firstCapital(text)} in ${server} :(`)
 
-		console.log(`setting ${msg.author.id} identity as ${found.id}`)
-		await this.client.provider.set(msg.author.id, 'identity', found.id)
+		await this.client.provider.set(msg.author.id, 'identity', found)
 		//found.avatar
 		return msg.util.send(`Done! From now on I'll know that you're ${found.name} of ${found.server}!`)
 	}

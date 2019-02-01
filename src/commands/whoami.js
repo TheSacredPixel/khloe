@@ -12,7 +12,7 @@ class WhoAmICommand extends Command {
 		let get = this.client.provider.get(msg.author.id, 'identity', null)
 
 		if(get)
-			return msg.util.send(`You're ${get}!`)
+			return msg.util.send(`You're ${get.name} of ${get.server}!`)
 		else
 			return msg.util.send('I don\'t know :(')
 	}
