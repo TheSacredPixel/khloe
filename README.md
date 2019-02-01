@@ -4,8 +4,7 @@ WIP FFXIV-focused Discord bot using discord.js with discord-akairo, and utilizin
 
 ## todo:
 
-* resets
-* character (iam, profile, equipment)
+* character (~~iam~~, profile, equipment)
 * lookups (item, action, minion/mount, recipe)
-* maintenance
+* maintenance, resets
 * weather?
