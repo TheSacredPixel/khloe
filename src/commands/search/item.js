@@ -1,4 +1,4 @@
-const { SearchCommand } = require('./search')
+/*const SearchCommand = require('./search')
 
 class ItemCommand extends SearchCommand {
 	constructor() {
@@ -23,3 +23,4 @@ class ItemCommand extends SearchCommand {
 }
 
 module.exports = ItemCommand
+*/

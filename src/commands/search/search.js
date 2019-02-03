@@ -1,4 +1,4 @@
-const { Command } = require('discord-akairo')
+/*const { Command } = require('discord-akairo')
 
 class SearchCommand extends Command {
 	constructor(name = 'search', options = {
@@ -27,3 +27,4 @@ class SearchCommand extends Command {
 }
 
 module.exports = SearchCommand
+*/
