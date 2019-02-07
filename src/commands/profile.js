@@ -23,10 +23,12 @@ class ProfileCommand extends Command {
 		if(!res.status.ok)
 			return msg.util.send('Error: Status was NOT ok')//PH
 
+		const char = res.character
+
 		const canvas = createCanvas(640, 873)
 		const ctx = canvas.getContext('2d')
 
-		const img = await loadImage(res.character.portrait)
+		const img = await loadImage(char.portrait)
 		ctx.drawImage(img, 0, 0)
 
 		const attach = new Attachment(canvas.toBuffer(), 'test.png')
