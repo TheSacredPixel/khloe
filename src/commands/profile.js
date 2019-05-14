@@ -1,6 +1,6 @@
-const { Command } = require('discord-akairo'),
-	{ Attachment } = require('discord.js'),
-	genProfile = require('../genProfile')
+const { Command } = require('discord-akairo')
+//{ Attachment } = require('discord.js'),
+//genProfile = require('../genProfile')
 
 class ProfileCommand extends Command {
 	constructor() {
@@ -26,9 +26,10 @@ class ProfileCommand extends Command {
 				return msg.channel.stopTyping()
 			}
 
-			let buffer = await genProfile(res, res.character.portrait)
-			msg.channel.stopTyping()
-			return msg.util.send('', new Attachment(buffer, 'test.png'))
+			/*let buffer = await genProfile(res, res.character.portrait)
+			msg.util.send('', new Attachment(buffer, 'test.png'))*/
+			msg.util.send(res.character.portrait)
+			return msg.channel.stopTyping()
 		} catch(err) {
 			console.error(err)
 			msg.util.send('Something went wrong :(')
