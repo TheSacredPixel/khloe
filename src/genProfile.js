@@ -1,4 +1,4 @@
-const { createCanvas, loadImage } = require('canvas')
+const { createCanvas, loadImage } = require('canvas-prebuilt')
 
 module.exports = async function(res, image, out) {
 	try {
