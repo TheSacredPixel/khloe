@@ -1,6 +1,6 @@
 const { Command } = require('discord-akairo'),
 	{ Attachment } = require('discord.js'),
-	{ createCanvas, loadImage } = require('canvas')
+	genProfile = require('../genProfile')
 
 class ProfileCommand extends Command {
 	constructor() {
@@ -14,25 +14,26 @@ class ProfileCommand extends Command {
 		let get = this.client.provider.get(msg.author.id, 'identity', null)
 
 		if(!get)// TODO: add @ping resolution, as well as char name search
-			return msg.util.send('I don\'t know :( Use `>iam (character name) (server)` so that I learn!')
+			return msg.util.reply('I don\'t know who you are :( Use `>iam (character name) (server)` so that I learn!')
 
 		//return msg.util.send(`You're ${get.name} of ${get.server}!`)
+		try {
+			msg.channel.startTyping()
+			const res = await this.client.xiv.character.get(get.id, { extended: true, data: 'FC' })
 
-		const res = await this.client.xiv.character.get(get.id, { extended: true })
+			if(!res.status.ok) {
+				msg.util.send('Error: Status was NOT ok')//PH
+				return msg.channel.stopTyping()
+			}
 
-		if(!res.status.ok)
-			return msg.util.send('Error: Status was NOT ok')//PH
-
-		const char = res.character
-
-		const canvas = createCanvas(640, 873)
-		const ctx = canvas.getContext('2d')
-
-		const img = await loadImage(char.portrait)
-		ctx.drawImage(img, 0, 0)
-
-		const attach = new Attachment(canvas.toBuffer(), 'test.png')
-		return msg.util.send('', attach)
+			let buffer = await genProfile(res, res.character.portrait)
+			msg.channel.stopTyping()
+			return msg.util.send('', new Attachment(buffer, 'test.png'))
+		} catch(err) {
+			console.error(err)
+			msg.util.send('Something went wrong :(')
+			return msg.channel.stopTyping()
+		}
 	}
 }
 

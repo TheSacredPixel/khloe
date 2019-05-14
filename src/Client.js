@@ -27,7 +27,7 @@ class Client extends AkairoClient {
 			? require('xivapi-js')
 			: require('../../xivapi-js/XIVAPI')
 
-		this.xiv = new XIVAPI(config.keys.xivapi, {snake_case: true})
+		this.xiv = new XIVAPI({private_key: config.keys.xivapi, snake_case: true})
 		this.config = config
 		this.utils = require('./utils')
 

@@ -20,7 +20,8 @@ module.exports = {
 			}
 		}
 
-		input.splice(pos, 1)
+		if(pos !== -1)
+			input.splice(pos, 1)
 		input = input.join(' ')
 
 		return { server: server, text: input }
