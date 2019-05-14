@@ -62,7 +62,7 @@ class PriceCommand extends Command {
 
 			}
 
-			msg.util.send(`I found \`${this.client.utils.firstCapital(name)}${foundPrice.quantity > 1 ? ` (x${foundPrice.quantity})` : ''}\` for sale for \`${foundPrice.price_total}g\` in ${this.client.utils.firstCapital(foundServer)}!`)
+			msg.util.send(`I found \`${this.client.utils.firstCapital(name)}${foundPrice.quantity > 1 ? ` (x${foundPrice.quantity})` : ''}\` for sale for \`${foundPrice.price_total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}g\` in ${this.client.utils.firstCapital(foundServer)}!`)
 			return msg.channel.stopTyping()
 		} catch(err) {
 			console.error(err)
