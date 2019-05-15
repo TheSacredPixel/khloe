@@ -16,7 +16,7 @@ class PriceCommand extends Command {
 
 	async exec(msg, { input }) {
 		let { server, text } = this.client.utils.getServer(input, this.client.xiv.resources.servers)
-		if(!server && !this.client.config.datacenter)
+		if(!server && !this.client.config.xiv.datacenter)
 			return msg.util.send('You need to give me a valid server to look in!')
 
 		try {
@@ -44,7 +44,7 @@ class PriceCommand extends Command {
 				foundPrice = res.prices[0]
 				foundServer = server
 			} else {//config datacenter
-				res = await this.client.xiv.market.get(id, {dc: this.client.config.datacenter, max_history: 1})
+				res = await this.client.xiv.market.get(id, {dc: this.client.config.xiv.datacenter, max_history: 1})
 
 				let servers = Object.keys(res)
 				for(let server of servers) {

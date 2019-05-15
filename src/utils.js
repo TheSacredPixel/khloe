@@ -25,6 +25,52 @@ module.exports = {
 		input = input.join(' ')
 
 		return { server: server, text: input }
-	}
+	},
 
+	toEmbed: {
+		characterFromSearch(char) {
+			const embed = {}
+			embed.title = char.name
+			embed.color = 0x5990ff
+			embed.thumbnail = {
+				url: char.avatar
+			}
+			embed.fields = [{
+				name: 'Server',
+				value: char.server,
+				inline: true
+			},
+			{
+				name: 'ID',
+				value: char.id,
+				inline: true
+			}]
+			return embed
+		},
+
+		fflogs(char, avg, highest) {
+			const embed = {}
+			embed.title = char.name
+			embed.color = 0x5990ff
+			embed.thumbnail = {
+				url: char.avatar
+			}
+			embed.fields = [{
+				name: 'Best Performance Average',
+				value: avg.toString(),
+				inline: false
+			},
+			{
+				name: 'Highest Historical Parse',
+				value: `${highest.encounterName} - ${highest.percentile} (${highest.spec})`,
+				inline: false
+			},
+			{
+				name: 'Server',
+				value: char.server,
+				inline: false
+			}]
+			return embed
+		}
+	}
 }

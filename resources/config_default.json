@@ -4,6 +4,12 @@
   "prefix": "",
   "ownerID": "",
   "keys": {
-    "xivapi": ""
-  }
+    "xivapi": "",
+		"fflogs": ""
+  },
+	"xiv": {
+		"server": "",
+		"datacenter": "",
+		"region": ""
+	}
 }
