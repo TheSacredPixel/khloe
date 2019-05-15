@@ -62,7 +62,7 @@ module.exports = {
 			},
 			{
 				name: 'Highest Historical Parse',
-				value: `${highest.encounterName} - ${highest.percentile} (${highest.spec})`,
+				value: `${highest.encounterName} - ${highest.percentile}% (${highest.spec})`,
 				inline: false
 			},
 			{
