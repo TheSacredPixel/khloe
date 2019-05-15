@@ -70,6 +70,7 @@ module.exports = {
 				value: char.server,
 				inline: false
 			}]
+			embed.url = `https://www.fflogs.com/character/id/${highest.characterID}`
 			return embed
 		}
 	}
