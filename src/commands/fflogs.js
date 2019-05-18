@@ -35,12 +35,12 @@ class FFLogsCommand extends Command {
 			let chars = res.results
 
 			let matches = 0, match
-			chars.forEach(c => {
+			for (const c of chars) {
 				if(c.name.toLowerCase() === text.toLowerCase()) {
 					matches++
 					match = c
 				}
-			})
+			}
 
 			let char
 			if(matches == 1) {//single perfect match
@@ -54,29 +54,23 @@ class FFLogsCommand extends Command {
 				let embed = this.client.utils.toEmbed.characterFromSearch(char)
 				msg.channel.stopTyping()
 				let m = await msg.util.send('Is this the character you\'re looking for?', {embed: embed})
-				m.react('✅')
-				m.react('❌')
-				let collector = m.createReactionCollector((r, user) => user.id === msg.author.id, {time: 30000})
-				collector.on('collect', async r => {
-					if(r.emoji.name === '✅') {
-						msg.channel.startTyping()
-						return await getRankings(char, msg, this.client)
-					} else if(r.emoji.name === '❌') {
-						msg.util.send('What\'s the character\'s server?')
-						collector = msg.channel.createMessageCollector(m => m.author.id === msg.author.id, {time: 30000})
-						collector.on('collect', async m => {
-							msg.channel.startTyping()
-							res = await this.client.xiv.character.search(text, {server: m.content})
-							if(!res.results.length) {
-								msg.channel.send('Character not found :(')
-								return msg.channel.stopTyping()
-							}
-
-							char = res.results.find(result => result.name.toLowerCase() === text.toLowerCase())
-							return await getRankings(char, msg, this.client)
-						})
+				let r = await this.client.utils.promptReaction(m, msg.author.id)
+				if(r.emoji.name === '✅') {
+					msg.channel.startTyping()
+					return await getRankings(char, msg, this.client)
+				} else if(r.emoji.name === '❌') {
+					msg.util.send('What\'s the character\'s server?')
+					let m = await this.client.utils.promptMessage(msg.channel, msg.author.id)
+					msg.channel.startTyping()
+					res = await this.client.xiv.character.search(text, {server: m.content})
+					if(!res.results.length) {
+						msg.channel.send('Character not found :(')
+						return msg.channel.stopTyping()
 					}
-				})
+
+					char = res.results.find(result => result.name.toLowerCase() === text.toLowerCase())
+					return await getRankings(char, msg, this.client)
+				}
 			}
 
 		} catch(err) {
@@ -105,19 +99,19 @@ async function getRankings(char, msg, {utils, config}) {
 			}
 
 			let encounters = []
-			rankings.forEach(rank => {
+			for (const rank of rankings) {
 				if(!encounters.some(e => e.encounterName === rank.encounterName) || encounters.find(e => e.encounterName === rank.encounterName).percentile < rank.percentile) {
 					encounters.push(rank)
 				}
-			})
+			}
 
 			let percSum = 0, percNum = 0, highest
-			encounters.forEach(enc => {
+			for (const enc of encounters) {
 				percNum++
 				percSum += enc.percentile
 				if(!highest || highest.percentile < enc.percentile)
 					highest = enc
-			})
+			}
 
 			let embed = utils.toEmbed.fflogs(char, (Math.round((percSum / percNum) * 100) / 100), highest)
 			msg.channel.send('', {embed:embed})

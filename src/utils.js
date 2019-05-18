@@ -27,6 +27,28 @@ module.exports = {
 		return { server: server, text: input }
 	},
 
+	promptReaction(m, id, time = 30000) {
+		return new Promise(resolve => {
+			m.react('✅')
+			m.react('❌')
+			let collector = m.createReactionCollector((r, user) => user.id === id && (r.emoji.name === '✅' || r.emoji.name === '❌'), {time: time})
+			collector.on('collect', async r => {
+				collector.stop()
+				resolve(r)
+			})
+		})
+	},
+
+	promptMessage(channel, id, time = 30000) {
+		return new Promise(resolve => {
+			let collector = channel.createMessageCollector(m => m.author.id === id, {time: time})
+			collector.on('collect', async m => {
+				collector.stop()
+				resolve(m)
+			})
+		})
+	},
+
 	toEmbed: {
 		characterFromSearch(char) {
 			const embed = {}
@@ -45,6 +67,52 @@ module.exports = {
 				value: char.id,
 				inline: true
 			}]
+			return embed
+		},
+
+		recipeFromSearch(rec) {
+			const embed = {}
+			embed.title = rec.name
+			embed.color = 0x5990ff
+			embed.thumbnail = {
+				url: rec.icon
+			}
+			embed.fields = [{
+				name: 'ID',
+				value: rec.id,
+				inline: true
+			}]
+			return embed
+		},
+
+		recipe(recipe, ingredients) {
+			let list = ''
+			for(let ing of ingredients) {
+				list += `${ing.n}x ${ing.i.name}\n`
+			}
+
+			const embed = {}
+			embed.title = recipe.name
+			embed.color = 0x5990ff
+			embed.thumbnail = {
+				url: recipe.icon
+			}
+			embed.fields = [{
+				name: 'Class',
+				value: recipe.class_job.abbreviation,
+				inline: true
+			},
+			{
+				name: 'Level',
+				value: recipe.recipe_level_table.class_job_level,
+				inline: true
+			},
+			{
+				name: 'Ingredients',
+				value: list,
+				inline: false
+			}]
+			embed.footer = `ID: ${recipe.id} - ${recipe.game_patch.name}`
 			return embed
 		},
 
