@@ -11,18 +11,24 @@ class NPMCommand extends Command {
 		})
 	}
 
-	exec(msg) {
-		this.client.provider.setOnResume(msg.channel.id, 'restart')
-		setTimeout(() => {
-			if(execSync('npm i')) {
-				msg.util.send('Updated dependencies, restarting...')
-				setTimeout(() => {
-					execSync('pm2 restart khloe')
-				}, 1000)
-			}
-		}, 2000)
-		return msg.util.send('Updating dependencies...')
+	async exec(msg) {
+		try {
+			await msg.util.send('Updating dependencies...')
+			await sleep(2000)
+			await execSync('npm i')
+			msg.util.send('Updated dependencies, restarting...')
+			await sleep(1000)
+			this.client.provider.setOnResume(msg.channel.id, 'restart')
+			return execSync('pm2 restart ivarabot')
+		} catch(err) {
+			console.error(err)
+			return msg.util.send('An error has occured. Output has been logged.')
+		}
 	}
+}
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 module.exports = NPMCommand
