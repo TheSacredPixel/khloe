@@ -7,6 +7,10 @@ module.exports = {
 		return words.join(' ')
 	},
 
+	decimalCommas(number) {
+		return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+	},
+
 	getServer(input, servers) {
 		input = input.split(' ')
 
@@ -50,39 +54,59 @@ module.exports = {
 	},
 
 	toEmbed: {
-		characterFromSearch(char) {
-			const embed = {}
-			embed.title = char.name
-			embed.color = 0x5990ff
-			embed.thumbnail = {
-				url: char.avatar
+		priceList(prices, item, servers) {
+			let topPrices = ''
+			for (let i = 0; i < prices.length; i++) {
+				topPrices += `**${module.exports.firstCapital(servers[i])}:** ${module.exports.decimalCommas(prices[i].price_per_unit)} *x${prices[i].quantity}* = __${module.exports.decimalCommas(prices[i].price_total)}__${prices[i].materia.length ? ` w/ ${prices[i].materia.length} materia` : ''}${prices[i].is_hq ? ' (HQ)' : ''}\n${i === 0 ? '\n' : ''}`
 			}
-			embed.fields = [{
-				name: 'Server',
-				value: char.server,
-				inline: true
-			},
-			{
-				name: 'ID',
-				value: char.id,
-				inline: true
-			}]
-			return embed
+
+			return {
+				title: item.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: 'https://xivapi.com' + item.icon
+				},
+				fields: [{
+					name: 'Current Lowest Prices',
+					value: topPrices,
+					inline: false
+				}]
+			}
+		},
+
+		characterFromSearch(char) {
+			return {
+				title: char.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: char.avatar
+				},
+				fields: [{
+					name: 'Server',
+					value: char.server,
+					inline: true
+				},
+				{
+					name: 'ID',
+					value: char.id,
+					inline: true
+				}]
+			}
 		},
 
 		recipeFromSearch(rec) {
-			const embed = {}
-			embed.title = rec.name
-			embed.color = 0x5990ff
-			embed.thumbnail = {
-				url: rec.icon
+			return {
+				title: rec.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: rec.icon
+				},
+				fields: [{
+					name: 'ID',
+					value: rec.id,
+					inline: true
+				}]
 			}
-			embed.fields = [{
-				name: 'ID',
-				value: rec.id,
-				inline: true
-			}]
-			return embed
 		},
 
 		recipe(recipe, ingredients) {
@@ -91,55 +115,57 @@ module.exports = {
 				list += `${ing.n}x ${ing.i.name}\n`
 			}
 
-			const embed = {}
-			embed.title = recipe.name
-			embed.color = 0x5990ff
-			embed.thumbnail = {
-				url: recipe.icon
+			return {
+				title: recipe.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: recipe.icon
+				},
+				fields: [{
+					name: 'Class',
+					value: recipe.class_job.abbreviation,
+					inline: true
+				},
+				{
+					name: 'Level',
+					value: recipe.recipe_level_table.class_job_level,
+					inline: true
+				},
+				{
+					name: 'Ingredients',
+					value: list,
+					inline: false
+				}],
+				footer: {
+					text: `ID: ${recipe.id} - ${recipe.game_patch.name}`
+				}
 			}
-			embed.fields = [{
-				name: 'Class',
-				value: recipe.class_job.abbreviation,
-				inline: true
-			},
-			{
-				name: 'Level',
-				value: recipe.recipe_level_table.class_job_level,
-				inline: true
-			},
-			{
-				name: 'Ingredients',
-				value: list,
-				inline: false
-			}]
-			embed.footer = `ID: ${recipe.id} - ${recipe.game_patch.name}`
-			return embed
 		},
 
 		fflogs(char, avg, highest) {
-			const embed = {}
-			embed.title = char.name
-			embed.color = 0x5990ff
-			embed.thumbnail = {
-				url: char.avatar
+			return {
+				title: char.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: char.avatar
+				},
+				fields: [{
+					name: 'Best Performance Average',
+					value: avg.toString(),
+					inline: false
+				},
+				{
+					name: 'Highest Historical Parse',
+					value: `${highest.encounterName} - ${highest.percentile}% (${highest.spec})`,
+					inline: false
+				},
+				{
+					name: 'Server',
+					value: char.server,
+					inline: false
+				}],
+				url: `https://www.fflogs.com/character/id/${highest.characterID}`
 			}
-			embed.fields = [{
-				name: 'Best Performance Average',
-				value: avg.toString(),
-				inline: false
-			},
-			{
-				name: 'Highest Historical Parse',
-				value: `${highest.encounterName} - ${highest.percentile}% (${highest.spec})`,
-				inline: false
-			},
-			{
-				name: 'Server',
-				value: char.server,
-				inline: false
-			}]
-			embed.url = `https://www.fflogs.com/character/id/${highest.characterID}`
-			return embed
 		}
 	}
 }

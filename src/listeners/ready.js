@@ -31,6 +31,8 @@ class ReadyListener extends Listener {
 			this.client.channels.get(check.id).send(text)//TODO, also map text
 			this.client.provider.clearOnResume()
 		}
+
+		console.log('Ready!')
 	}
 }
 

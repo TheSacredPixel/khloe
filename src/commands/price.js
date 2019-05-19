@@ -32,37 +32,40 @@ class PriceCommand extends Command {
 			let found = res.results.find(result => result.name.toLowerCase() === text.toLowerCase())
 			let {id, name} = found ? found : res.results[0]
 
-			let foundPrice, foundServer
+			let prices, item, servers
 
-			if(server) {//given server
+			if(server) {//use given server
 				res = await this.client.xiv.market.get(id, {servers: server, max_history: 1})
 				if(!res.prices.length) {
 					msg.util.send(`Couldn't find any listings for ${this.client.utils.firstCapital(name)} in ${server}...`)
 					return msg.channel.stopTyping()
 				}
 
-				foundPrice = res.prices[0]
-				foundServer = server
-			} else {//config datacenter
-				res = await this.client.xiv.market.get(id, {dc: this.client.config.xiv.datacenter, max_history: 1})
+				prices = res.prices.slice(0, 10)
+				item = res.item
+				servers = server
+			} else {//use config datacenter
+				let dc = this.client.config.xiv.datacenter
+				res = await this.client.xiv.market.get(id, {dc: dc, max_history: 1})
 
-				let servers = Object.keys(res)
-				for(let server of servers) {
-					let price = res[server].prices[0]
-					if(price && (!foundPrice || price.price_total < foundPrice.price_total)) {
-						foundPrice = price
-						foundServer = server
-					}
+				let servs = Object.keys(res), hasListings = false
+				for(let server of servs) {
+					hasListings = res[server].prices.length ? true : hasListings
 				}
 
-				if(!foundPrice) {
-					msg.util.send(`Couldn't find any listings for ${this.client.utils.firstCapital(name)} in ${this.client.config.datacenter}...`)
+				if(!hasListings) {
+					msg.util.send(`Couldn't find any listings for ${this.client.utils.firstCapital(name)} in ${dc}...`)
 					return msg.channel.stopTyping()
 				}
 
+				let result = makePriceList(res)
+				prices = result.prices
+				item = res[servs[0]].item
+				servers = result.servers
 			}
 
-			msg.util.send(`I found \`${this.client.utils.firstCapital(name)}${foundPrice.quantity > 1 ? ` (x${foundPrice.quantity})` : ''}\` for sale for \`${foundPrice.price_total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}g\` in ${this.client.utils.firstCapital(foundServer)}!`)
+			const embed = this.client.utils.toEmbed.priceList(prices, item, servers)
+			msg.util.send('',{embed: embed})
 			return msg.channel.stopTyping()
 		} catch(err) {
 			console.error(err)
@@ -70,6 +73,26 @@ class PriceCommand extends Command {
 			return msg.channel.stopTyping()
 		}
 	}
+}
+
+function makePriceList(res, num = 10) {
+	let merged = [], servers = [], servs = Object.keys(res)
+	for (let i = 0; i < num; i++) {
+		//get single lowest value
+		let lowestPrice, lowestServ
+		for (let serv of servs) {
+			if(res[serv].prices.length && (!lowestPrice || res[serv].prices[0].price_per_unit < lowestPrice.price_per_unit)) {
+				lowestPrice = res[serv].prices[0]
+				lowestServ = serv
+			}
+		}
+		if(!lowestServ)//all arrays empty
+			break
+		merged.push(lowestPrice)
+		servers.push(lowestServ)
+		res[lowestServ].prices.shift()
+	}
+	return {prices: merged, servers: servers}
 }
 
 module.exports = PriceCommand
