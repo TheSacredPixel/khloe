@@ -34,8 +34,8 @@ class IAmCommand extends Command {
 			return msg.util.send(`Couldn't find ${this.client.utils.firstCapital(text)} in ${server} :(`)
 
 		await this.client.provider.set(msg.author.id, 'identity', found)
-		//found.avatar
-		return msg.util.send(`Done! From now on I'll know that you're ${found.name} of ${found.server}!`)
+		let embed = this.client.utils.toEmbed.characterFromSearch(found)
+		return msg.util.send('Done! From now on I\'ll know that this is you!', {embed:embed})
 	}
 }
 

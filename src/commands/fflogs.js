@@ -94,7 +94,7 @@ async function getRankings(char, msg, {utils, config}) {
 			})
 
 			if(!rankings.length) {
-				msg.channel.send(`I couldn't find ${char.name} of ${char.server} on FF Logs, or there are no saved parses.`)
+				msg.channel.send(`I couldn't find ${char.name} of ${char.server} on FF Logs (or they have no parses for this raid cycle).`)
 				return resolve(msg.channel.stopTyping())
 			}
 
