@@ -10,7 +10,7 @@ class ReadyListener extends Listener {
 
 	exec() {
 		//set activity
-		this.client.user.setActivity('>help')
+		//this.client.user.setActivity('>help')
 
 		//check for onresume variables
 		let check = this.client.provider.getOnResume()

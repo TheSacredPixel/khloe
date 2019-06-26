@@ -5,7 +5,6 @@ WIP FFXIV-focused Discord bot using discord.js with discord-akairo, and utilizin
 ## todo:
 
 * unspoiled nodes
-* fflogs player search
 * recipe mat breakdown
 
 

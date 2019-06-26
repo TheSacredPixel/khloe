@@ -74,8 +74,7 @@ class FFLogsCommand extends Command {
 			}
 
 		} catch(err) {
-			console.error(err)
-			msg.util.send('Something went wrong :(')
+			this.client.utils.throwError(err,msg)
 			return msg.channel.stopTyping()
 		}
 	}

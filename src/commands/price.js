@@ -3,7 +3,7 @@ const { Command } = require('discord-akairo')
 class PriceCommand extends Command {
 	constructor() {
 		super('price', {
-			aliases: ['price'],
+			aliases: ['price', 'mb'],
 			description: '',
 			args: [
 				{
@@ -68,8 +68,7 @@ class PriceCommand extends Command {
 			msg.util.send('',{embed: embed})
 			return msg.channel.stopTyping()
 		} catch(err) {
-			console.error(err)
-			msg.util.send('Something went wrong :(')
+			this.client.utils.throwError(err,msg)
 			return msg.channel.stopTyping()
 		}
 	}

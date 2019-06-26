@@ -109,10 +109,62 @@ module.exports = {
 			}
 		},
 
-		recipe(recipe, ingredients) {
-			let list = ''
-			for(let ing of ingredients) {
-				list += `${ing.n}x ${ing.i.name}\n`
+		recipe(recipe, list, fullList) {
+			let basic = ''
+			for(let mat of list.values()) {
+				basic += `${mat[1]}x ${mat[0].name}\n`
+			}
+
+			let fields = [{
+				name: 'Class',
+				value: recipe.class_job.abbreviation,
+				inline: true
+			},
+			{
+				name: 'Level',
+				value: recipe.recipe_level_table.class_job_level,
+				inline: true
+			}]
+
+			if(recipe.required_craftsmanship)
+				fields.push({
+					name: 'Craftsmanship',
+					value: recipe.required_craftsmanship,
+					inline: true
+				})
+			if(recipe.required_control)
+				fields.push({
+					name: 'Control',
+					value: recipe.required_control,
+					inline: true
+				})
+
+			fields.push({
+				name: 'Ingredients',
+				value: basic,
+				inline: false
+			})
+
+			if(fullList) {
+				let recipes = ''
+				for(let rec of fullList.recipes) {
+					recipes += `${rec.item_result.name} (${rec.class_job.abbreviation} lvl ${recipe.recipe_level_table.class_job_level})\n`
+				}
+
+				let mats = ''
+				for(let mat of fullList.mats.values()) {
+					mats += `${mat[1]}x ${mat[0].name}\n`
+				}
+				fields.push({
+					name: 'Recipes',
+					value: recipes,
+					inline: false
+				},
+				{
+					name: 'All Materials',
+					value: mats,
+					inline: false
+				})
 			}
 
 			return {
@@ -121,21 +173,7 @@ module.exports = {
 				thumbnail: {
 					url: recipe.icon
 				},
-				fields: [{
-					name: 'Class',
-					value: recipe.class_job.abbreviation,
-					inline: true
-				},
-				{
-					name: 'Level',
-					value: recipe.recipe_level_table.class_job_level,
-					inline: true
-				},
-				{
-					name: 'Ingredients',
-					value: list,
-					inline: false
-				}],
+				fields: fields,
 				footer: {
 					text: `ID: ${recipe.id} - ${recipe.game_patch.name}`
 				}
@@ -167,5 +205,10 @@ module.exports = {
 				url: `https://www.fflogs.com/character/id/${highest.characterID}`
 			}
 		}
+	},
+
+	throwError(err, msg) {
+		console.error(err)
+		msg.util.send(`Something went wrong :(\n\`${err.message}\``)
 	}
 }
