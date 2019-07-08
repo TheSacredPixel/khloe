@@ -197,7 +197,12 @@ module.exports = {
 			}
 		},
 
-		fflogs(char, avg, highest) {
+		fflogs(char, avg, highest, parses) {
+			let latest = ''
+			for (let i = 0; i < 5; i++) {
+				latest += `__${parses[i].encounterName}__ - ${parses[i].total}  **${parses[i].percentile}%** (${parses[i].spec})\n`
+			}
+
 			return {
 				title: char.name,
 				color: 0x5990ff,
@@ -206,12 +211,17 @@ module.exports = {
 				},
 				fields: [{
 					name: 'Best Performance Average',
-					value: `${avg.toString()}%`,
+					value: `**${avg.toString()}%**`,
 					inline: false
 				},
 				{
-					name: 'Highest Historical Parse',
-					value: `${highest.encounterName} - ${highest.percentile}% (${highest.spec})`,
+					name: 'Best Historical Parse',
+					value: `__${highest.encounterName}__ - ${highest.total}  **${highest.percentile}%** (${highest.spec})`,
+					inline: false
+				},
+				{
+					name: 'Latest Parses',
+					value: latest,
 					inline: false
 				},
 				{

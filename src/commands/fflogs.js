@@ -44,7 +44,7 @@ class FFLogsCommand extends Command {
 
 			let char
 			if(matches == 1) {//single perfect match
-				return await getRankings(match, msg, this.client)
+				return await getParses(match, msg, this.client)
 			} else {//multiple or no matches, prompt
 				if(match)
 					char = match
@@ -58,7 +58,7 @@ class FFLogsCommand extends Command {
 				if(!r) return
 				if(r.emoji.name === '✅') {
 					msg.channel.startTyping()
-					return await getRankings(char, msg, this.client)
+					return await getParses(char, msg, this.client)
 				} else if(r.emoji.name === '❌') {
 					msg.util.send('What\'s the character\'s server?')
 					let m = await this.client.utils.promptMessage(msg.channel, msg.author.id)
@@ -71,7 +71,7 @@ class FFLogsCommand extends Command {
 					}
 
 					char = res.results.find(result => result.name.toLowerCase() === text.toLowerCase())
-					return await getRankings(char, msg, this.client)
+					return await getParses(char, msg, this.client)
 				}
 			}
 
@@ -82,11 +82,11 @@ class FFLogsCommand extends Command {
 	}
 }
 
-async function getRankings(char, msg, {utils, config}) {
+async function getParses(char, msg, {utils, config}) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let rankings = await req({
-				uri: `https://www.fflogs.com:443/v1/rankings/character/${char.name}/${char.server}/${config.xiv.region}`,
+			let parses = await req({
+				uri: `https://www.fflogs.com:443/v1/parses/character/${char.name}/${char.server}/${config.xiv.region}`,
 				qs: {
 					api_key: config.keys.fflogs,
 					timeframe: 'historical'
@@ -94,13 +94,13 @@ async function getRankings(char, msg, {utils, config}) {
 				json: true
 			})
 
-			if(!rankings.length) {
+			if(!parses.length) {
 				msg.channel.send(`I couldn't find ${char.name} of ${char.server} on FF Logs (or they have no parses for this raid cycle).`)
 				return resolve(msg.channel.stopTyping())
 			}
 
 			let encounters = []
-			for (const rank of rankings) {
+			for (const rank of parses) {
 				if(!encounters.some(e => e.encounterName === rank.encounterName) || encounters.find(e => e.encounterName === rank.encounterName).percentile < rank.percentile) {
 					encounters.push(rank)
 				}
@@ -114,7 +114,7 @@ async function getRankings(char, msg, {utils, config}) {
 					highest = enc
 			}
 
-			let embed = utils.toEmbed.fflogs(char, (Math.round((percSum / percNum) * 100) / 100), highest)
+			let embed = utils.toEmbed.fflogs(char, (Math.round((percSum / percNum) * 100) / 100), highest, parses)
 			msg.channel.send('', {embed:embed})
 			return resolve(msg.channel.stopTyping())
 
