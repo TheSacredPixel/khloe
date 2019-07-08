@@ -259,7 +259,7 @@ module.exports = {
 					inline: false
 				}],
 				footer: {
-					text: 'Prices are taken from market board purchase history and are only indicative.'
+					text: 'Prices are taken from market board purchase history and are only roughly indicative.'
 				}
 			}
 		}
