@@ -31,14 +31,18 @@ module.exports = {
 		return { server: server, text: input }
 	},
 
-	promptReaction(m, id, time = 30000) {
-		return new Promise(resolve => {
-			m.react('✅')
-			m.react('❌')
-			let collector = m.createReactionCollector((r, user) => user.id === id && (r.emoji.name === '✅' || r.emoji.name === '❌'), {time: time})
-			collector.on('collect', async r => {
-				collector.stop()
+	promptReaction(m, id, reactions, time = 30000) {
+		return new Promise(async resolve => {
+			for (const emoji of reactions) {
+				await m.react(emoji)
+			}
+			let collector = m.createReactionCollector((r, user) => user.id === id && reactions.includes(r.emoji.name), {time: time})
+			collector.on('collect', r => {
 				resolve(r)
+				collector.stop()
+			})
+			collector.on('end', () => {
+				resolve(null)
 			})
 		})
 	},
@@ -47,8 +51,11 @@ module.exports = {
 		return new Promise(resolve => {
 			let collector = channel.createMessageCollector(m => m.author.id === id, {time: time})
 			collector.on('collect', async m => {
-				collector.stop()
 				resolve(m)
+				collector.stop()
+			})
+			collector.on('end', () => {
+				resolve(null)
 			})
 		})
 	},
@@ -112,7 +119,7 @@ module.exports = {
 		recipe(recipe, list, fullList) {
 			let basic = ''
 			for(let mat of list.values()) {
-				basic += `${mat[1]}x ${mat[0].name}\n`
+				basic += `${mat.num}x ${mat.item.name}\n`
 			}
 
 			let fields = [{
@@ -152,9 +159,19 @@ module.exports = {
 				}
 
 				let mats = ''
-				for(let mat of fullList.mats.values()) {
-					mats += `${mat[1]}x ${mat[0].name}\n`
+				for(let pass = 1; pass <= 2; pass++) {
+					for(let id of fullList.mats.keys()) {
+						let mat = fullList.mats.get(id)
+						if(pass === 1 && mat.item.id > 20) {//keep crystals at the bottom
+							mats += `${mat.num}x ${mat.item.name}\n`
+						}
+						else if(pass === 2 && mat.item.id < 20) {
+							mats += `${mat.num}x ${mat.item.name}\n`
+						}
+					}
+					mats += '\n'
 				}
+
 				fields.push({
 					name: 'Recipes',
 					value: recipes,
@@ -175,7 +192,7 @@ module.exports = {
 				},
 				fields: fields,
 				footer: {
-					text: `ID: ${recipe.id} - ${recipe.game_patch.name}`
+					text: `ID: ${recipe.id} - ${recipe.game_patch ? recipe.game_patch.name : 'Patch 2.0'} | Click on the 🔍 react to look up material prices.`
 				}
 			}
 		},
@@ -189,7 +206,7 @@ module.exports = {
 				},
 				fields: [{
 					name: 'Best Performance Average',
-					value: avg.toString(),
+					value: `${avg.toString()}%`,
 					inline: false
 				},
 				{
@@ -204,11 +221,42 @@ module.exports = {
 				}],
 				url: `https://www.fflogs.com/character/id/${highest.characterID}`
 			}
+		},
+
+		materialPrices(recipe, mats) {
+			console.log(recipe)
+			let list = '', sum = 0
+
+			for (const mat of mats.values()) {
+				list += `**${mat.item.name}**: ${mat.cost ? `${module.exports.decimalCommas(mat.cost)}g *x${mat.num}*` : '???'}\n`
+				sum += mat.cost * mat.num
+			}
+
+			return {
+				title: recipe.name,
+				color: 0x5990ff,
+				thumbnail: {
+					url: recipe.icon
+				},
+				fields: [{
+					name: 'Material Prices',
+					value: list,
+					inline: false
+				},
+				{
+					name: 'Total Price',
+					value: `**__${module.exports.decimalCommas(sum)}__ gil**`,
+					inline: false
+				}],
+				footer: {
+					text: 'Prices are taken from market board purchase history and are only indicative.'
+				}
+			}
 		}
 	},
 
 	throwError(err, msg) {
 		console.error(err)
-		msg.util.send(`Something went wrong :(\n\`${err.message}\``)
+		msg.util.send(`Something went wrong :(\n\`${err.stack.split('\n').slice(0,2).join('\n')}\``)
 	}
 }
