@@ -54,13 +54,15 @@ class FFLogsCommand extends Command {
 				let embed = this.client.utils.toEmbed.characterFromSearch(char)
 				msg.channel.stopTyping()
 				let m = await msg.util.send('Is this the character you\'re looking for?', {embed: embed})
-				let r = await this.client.utils.promptReaction(m, msg.author.id)
+				let r = await this.client.utils.promptReaction(m, msg.author.id, ['✅','❌'])
+				if(!r) return
 				if(r.emoji.name === '✅') {
 					msg.channel.startTyping()
 					return await getRankings(char, msg, this.client)
 				} else if(r.emoji.name === '❌') {
 					msg.util.send('What\'s the character\'s server?')
 					let m = await this.client.utils.promptMessage(msg.channel, msg.author.id)
+					if(!r) return
 					msg.channel.startTyping()
 					res = await this.client.xiv.character.search(text, {server: m.content})
 					if(!res.results.length) {
