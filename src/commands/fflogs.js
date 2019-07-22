@@ -100,9 +100,9 @@ async function getParses(char, msg, {utils, config}) {
 			}
 
 			let encounters = []
-			for (const rank of parses) {
-				if(!encounters.some(e => e.encounterName === rank.encounterName) || encounters.find(e => e.encounterName === rank.encounterName).percentile < rank.percentile) {
-					encounters.push(rank)
+			for (const parse of parses) {
+				if(!encounters.some(e => e.encounterName === parse.encounterName) || encounters.find(e => e.encounterName === parse.encounterName).percentile < parse.percentile) {
+					encounters.push(parse)
 				}
 			}
 

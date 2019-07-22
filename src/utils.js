@@ -199,13 +199,24 @@ module.exports = {
 
 		fflogs(char, avg, highest, parses) {
 			let latest = ''
-			for (let i = 0; i < 5; i++) {
+			for(let i = 0; i < 5; i++) {
+				if(!parses[i])
+					break
 				latest += `__${parses[i].encounterName}__ - ${parses[i].total}  **${parses[i].percentile}%** (${parses[i].spec})\n`
+			}
+
+			const colors = new Map().set(25, 0x666).set(50, 0x1EFF00).set(75, 0x0070FF).set(95, 0xA335EE).set(99, 0xFF8000).set(100, 0xE5CC80)
+			let color
+			for (const num of colors.keys()) {
+				if(highest.percentile <= num) {
+					color = colors.get(num)
+					break
+				}
 			}
 
 			return {
 				title: char.name,
-				color: 0x5990ff,
+				color: color,
 				thumbnail: {
 					url: char.avatar
 				},
