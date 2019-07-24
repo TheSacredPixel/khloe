@@ -200,12 +200,21 @@ module.exports = {
 		fflogs(char, avg, highest, parses) {
 			let latest = ''
 			for(let i = 0; i < 5; i++) {
-				if(!parses[i])
+				if(!parses[0])
 					break
-				latest += `__${parses[i].encounterName}__ - ${parses[i].total}  **${parses[i].percentile}%** (${parses[i].spec})\n`
+
+				let last, pos
+				for (let j = 0; j < parses.length; j++) {
+					if(!last || last.startTime < parses[j].startTime) {
+						last = parses[j]
+						pos = j
+					}
+				}
+				parses.splice(pos, 1)
+				latest += `__${last.encounterName}__ - ${last.total}  **${last.percentile}%** (${last.spec})\n`
 			}
 
-			const colors = new Map().set(25, 0x666).set(50, 0x1EFF00).set(75, 0x0070FF).set(95, 0xA335EE).set(99, 0xFF8000).set(100, 0xE5CC80)
+			const colors = new Map().set(24, 0x666).set(49, 0x1EFF00).set(74, 0x0070FF).set(94, 0xA335EE).set(99, 0xFF8000).set(100, 0xE5CC80)
 			let color
 			for (const num of colors.keys()) {
 				if(highest.percentile <= num) {
@@ -278,6 +287,9 @@ module.exports = {
 
 	throwError(err, msg) {
 		console.error(err)
-		msg.util.send(`Something went wrong :(\n\`${err.stack.split('\n').slice(0,2).join('\n')}\``)
+		let stack = err.stack.split('\n').slice(0,2).join('\n')
+		if(/api.*?key/.test(stack))
+			stack = err.message
+		msg.util.send(`Something went wrong :(\n\`${stack}\``)
 	}
 }

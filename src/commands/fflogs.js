@@ -16,6 +16,19 @@ class FFLogsCommand extends Command {
 	}
 
 	async exec(msg, { input }) {
+		if(!input) {
+			let char = this.client.provider.get(msg.author.id, 'identity')
+			if(!char)
+				return msg.util.send('You either need to give me a character name, or use the `iam` command to tell me who you are!')
+			else
+				return await getParses(char, msg, this.client)
+		} else if(msg.mentions.users.first()) {
+			let char = this.client.provider.get(msg.mentions.users.first().id, 'identity')
+			if(!char)
+				return msg.util.send('That user hasn\'t used the `iam` command to tell me who they are!')
+			else
+				return await getParses(char, msg, this.client)
+		}
 		//isolate char name and/or server
 		let { server, text } = this.client.utils.getServer(input, this.client.xiv.resources.servers)
 		if(!server && !this.client.config.xiv.datacenter)
