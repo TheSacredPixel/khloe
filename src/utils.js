@@ -31,6 +31,10 @@ module.exports = {
 		return { server: server, text: input }
 	},
 
+	cleanDCFromServer(text) {
+		return text.replace(/(.*).\(.*\)/, '$1')
+	},
+
 	promptReaction(m, id, reactions, time = 30000) {
 		return new Promise(async resolve => {
 			for (const emoji of reactions) {

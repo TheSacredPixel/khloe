@@ -4,7 +4,7 @@ const { Command } = require('discord-akairo'),
 class FFLogsCommand extends Command {
 	constructor() {
 		super('fflogs', {
-			aliases: ['fflogs', 'parse'],
+			aliases: ['fflogs', 'parses', 'logs'],
 			description: '',
 			args: [
 				{
@@ -99,13 +99,15 @@ async function getParses(char, msg, {utils, config}) {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let parses = await req({
-				uri: `https://www.fflogs.com:443/v1/parses/character/${char.name}/${char.server}/${config.xiv.region}`,
+				uri: `https://www.fflogs.com:443/v1/parses/character/${char.name}/${utils.cleanDCFromServer(char.server)}/${config.xiv.region}`,
 				qs: {
 					api_key: config.keys.fflogs,
 					timeframe: 'historical'
 				},
 				json: true
 			})
+
+			parses = parses.filter(p => p.difficulty === config.xiv.encounter_difficulty)
 
 			if(!parses.length) {
 				msg.channel.send(`I couldn't find ${char.name} of ${char.server} on FF Logs (or they have no parses for this raid cycle).`)
@@ -118,6 +120,7 @@ async function getParses(char, msg, {utils, config}) {
 					encounters.push(parse)
 				}
 			}
+
 
 			let percSum = 0, percNum = 0, highest
 			for (const enc of encounters) {
