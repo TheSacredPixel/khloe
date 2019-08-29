@@ -4,7 +4,7 @@ const { Command } = require('discord-akairo'),
 class FFLogsCommand extends Command {
 	constructor() {
 		super('fflogs', {
-			aliases: ['fflogs', 'parses', 'logs'],
+			aliases: ['fflogs', 'parse'],
 			description: '',
 			args: [
 				{
