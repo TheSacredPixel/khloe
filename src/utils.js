@@ -65,10 +65,10 @@ module.exports = {
 	},
 
 	toEmbed: {
-		priceList(prices, item, servers) {
+		priceList(listings, item, server) {
 			let topPrices = ''
-			for (let i = 0; i < prices.length; i++) {
-				topPrices += `**${module.exports.firstCapital(servers[i])}:** ${module.exports.decimalCommas(prices[i].price_per_unit)} *x${prices[i].quantity}* = __${module.exports.decimalCommas(prices[i].price_total)}__${prices[i].materia.length ? ` w/ ${prices[i].materia.length} materia` : ''}${prices[i].is_hq ? ' (HQ)' : ''}\n${i === 0 ? '\n' : ''}`
+			for (let listing of listings) {
+				topPrices += `**${listing.worldName ? listing.worldName : server}:** ${module.exports.decimalCommas(listing.pricePerUnit)} *x${listing.quantity}* = __${module.exports.decimalCommas(listing.total)}__${listing.materia.length ? ` w/ ${listing.materia.length} materia` : ''}${listing.hq ? ' (HQ)' : ''}\n`
 			}
 
 			return {
@@ -110,7 +110,7 @@ module.exports = {
 				title: rec.name,
 				color: 0x5990ff,
 				thumbnail: {
-					url: rec.icon
+					url: 'https://xivapi.com' + rec.icon
 				},
 				fields: [{
 					name: 'ID',
@@ -192,7 +192,7 @@ module.exports = {
 				title: recipe.name,
 				color: 0x5990ff,
 				thumbnail: {
-					url: recipe.icon
+					url: 'https://xivapi.com' + recipe.icon
 				},
 				fields: fields,
 				footer: {
@@ -270,7 +270,7 @@ module.exports = {
 				title: recipe.name,
 				color: 0x5990ff,
 				thumbnail: {
-					url: recipe.icon
+					url: 'https://xivapi.com' + recipe.icon
 				},
 				fields: [{
 					name: 'Material Prices',
@@ -294,6 +294,6 @@ module.exports = {
 		let stack = err.stack.split('\n').slice(0,2).join('\n')
 		if(/api.*?key/.test(stack))
 			stack = err.message
-		msg.util.send(`Something went wrong :(\n\`${stack}\``)
+		msg.util.send(`Something went wrong :(\n\`\`\`js\n${stack}\n\`\`\``)
 	}
 }

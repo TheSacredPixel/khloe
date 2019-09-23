@@ -1,4 +1,5 @@
-const { Command } = require('discord-akairo')
+const { Command } = require('discord-akairo'),
+	request = require('request-promise-native')
 
 class CraftCommand extends Command {
 	constructor() {
@@ -107,9 +108,12 @@ function promptPriceCheck(m, msg, client, mats, recipe) {
 		if(!r) return
 		msg.channel.startTyping()
 		for(const id of mats.keys()) {//add last sale price to mats
-			let res = await client.xiv.market.get(id, {servers: client.config.xiv.server, max_history: 1})
+			let res = await request({
+				uri: `https://universalis.app/api/${client.config.xiv.datacenter}/${id}`,
+				json: true
+			})
 			let temp = mats.get(id)
-			temp.cost = res.history.length ? res.history[0].price_per_unit : null
+			temp.cost = res.recentHistory.length ? res.recentHistory[0].pricePerUnit : null
 			mats.set(id, temp)
 		}
 		const embed = client.utils.toEmbed.materialPrices(recipe, mats)

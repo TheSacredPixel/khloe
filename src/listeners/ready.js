@@ -8,7 +8,7 @@ class ReadyListener extends Listener {
 		})
 	}
 
-	exec() {
+	async exec() {
 		//set activity
 		//this.client.user.setActivity('>help')
 
@@ -31,6 +31,8 @@ class ReadyListener extends Listener {
 			this.client.channels.get(check.id).send(text)//TODO, also map text
 			this.client.provider.clearOnResume()
 		}
+
+		this.client.xiv.resources.servers = await this.client.xiv.data.servers()
 
 		console.log('Ready!')
 	}
