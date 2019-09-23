@@ -23,9 +23,7 @@ class Client extends AkairoClient {
 			disableEveryone: false
 		})
 
-		const XIVAPI = (process.env.NODE_ENV == 'production')
-			? require('xivapi-js')
-			: require('../../xivapi-js/XIVAPI')
+		const XIVAPI = require('xivapi-js')
 
 		this.xiv = new XIVAPI({private_key: config.keys.xivapi, snake_case: true})
 		this.config = config
